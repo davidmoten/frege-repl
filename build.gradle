@@ -35,9 +35,6 @@ subprojects {
         snapshotAppendix = "-SNAPSHOT"
         projectVersion = baseVersion + (isSnapshot ? snapshotAppendix : "")
 
-        fregeBaseVersion = "3.23.370"
-        fregeClassifier = "-g898bc8c"
-        fregeVersion = "$fregeBaseVersion$fregeClassifier"
         fregeInterpreterVersion = "1.3-SNAPSHOT"
     }
 
@@ -59,7 +56,6 @@ subprojects {
     }
 
     dependencies {
-        compile files("$project.rootDir/lib/frege-${fregeVersion}.jar")
         compile "org.frege-lang:frege-interpreter-core:$fregeInterpreterVersion"
     }
 
