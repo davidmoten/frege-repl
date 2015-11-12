@@ -144,7 +144,7 @@ loop console _ _ env = repl console env
 eval :: Command -> Repl ReplResult
 eval (Eval line) = do
   env <- Repl.get
-  let wanted (msg :: Message) = msg.pos.line >= env.lineStart
+  let wanted (msg :: Message) = msg.pos.line >= env.lineStart || msg.text ~ 'Native error'
   (res, newState) <- liftIO $ Interpreter.run (interpret line) env.config env.state
   case res of
     InterpreterResult.Success{sourceRepr=sourceRepr, compilerState=g} -> do
@@ -229,7 +229,7 @@ eval (Set s) | Just (Just limitStr : _) <- s `match` 'show-limit\s+(.+)' =
     let updateOpts limit | limit <= 0 = return errInfo
                          | otherwise = Repl.modify ReplEnv.{opts <- ReplOpts.{showLimit = limit}} >> return (ReplInfo [])
         invalidNumber e = return errInfo
-        errInfo = ReplInfo [Message.error "show-limit value must be a positive integer."]
+        errInfo = ReplInfo [Message.error $ "show-limit value must be a positive integer below " ++ show (maxBound :: Int)]
     either invalidNumber updateOpts limitStr.int
 
 eval (Set "v") = parseAndSetCompilerFlag "-v"
